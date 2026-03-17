@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading...</title>
+    <style>
+      :root {
+        --bg-1: #030705;
+        --bg-2: #07110d;
+        --panel: rgba(5, 20, 12, 0.72);
+        --panel-border: rgba(0, 255, 136, 0.18);
+        --grid: rgba(0, 255, 136, 0.08);
+        --text: #d7ffe8;
+        --muted: #7ebd99;
+        --accent: #00ff88;
+        --accent-soft: rgba(0, 255, 136, 0.16);
+        --danger: #7cffc0;
+        --shadow:
+          0 0 22px rgba(0, 255, 136, 0.08), 0 0 60px rgba(0, 0, 0, 0.55);
+        --radius: 24px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+        color: var(--text);
+        background:
+          linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+          radial-gradient(
+            circle at top,
+            rgba(0, 255, 136, 0.08),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(0, 255, 136, 0.05),
+            transparent 28%
+          ),
+          linear-gradient(135deg, var(--bg-1), var(--bg-2) 55%, #020403);
+        background-size:
+          28px 28px,
+          28px 28px,
+          auto,
+          auto,
+          auto;
+      }
+
+      .app {
+        width: min(100%, 760px);
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+        border-radius: var(--radius);
+        padding: 24px;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .app::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 255, 136, 0.04),
+          transparent 18%,
+          transparent 82%,
+          rgba(0, 255, 136, 0.03)
+        );
+        pointer-events: none;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        opacity: 0.9;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+        line-height: 1.1;
+        text-shadow: 0 0 14px rgba(0, 255, 136, 0.22);
+      }
+
+      .subtitle {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        max-width: 55ch;
+      }
+
+      .status {
+        border: 1px solid var(--panel-border);
+        border-radius: 999px;
+        padding: 10px 14px;
+        color: var(--accent);
+        background: rgba(0, 255, 136, 0.06);
+        font-size: 0.8rem;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        box-shadow: inset 0 0 14px rgba(0, 255, 136, 0.04);
+      }
+
+      .target-card {
+        border: 1px solid rgba(0, 255, 136, 0.12);
+        background: rgba(0, 0, 0, 0.18);
+        border-radius: 20px;
+        padding: 18px;
+        margin-bottom: 20px;
+      }
+
+      .target-row {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 14px;
+        align-items: end;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      label {
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(0, 255, 136, 0.14);
+        background: rgba(0, 16, 8, 0.72);
+        color: var(--text);
+        font: inherit;
+        box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.03);
+      }
+
+      input:focus {
+        outline: none;
+        border-color: rgba(0, 255, 136, 0.38);
+        box-shadow:
+          0 0 0 3px rgba(0, 255, 136, 0.08),
+          inset 0 0 20px rgba(0, 255, 136, 0.03);
+      }
+
+      .countdown-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 18px 0 14px;
+      }
+
+      .unit {
+        border: 1px solid rgba(0, 255, 136, 0.13);
+        border-radius: 20px;
+        padding: 18px 12px;
+        text-align: center;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 255, 136, 0.06),
+          rgba(0, 255, 136, 0.02)
+        );
+        box-shadow: inset 0 0 24px rgba(0, 255, 136, 0.04);
+      }
+
+      .value {
+        display: block;
+        font-size: clamp(1.8rem, 6vw, 3.2rem);
+        line-height: 1;
+        font-weight: 800;
+        color: var(--accent);
+        text-shadow: 0 0 14px rgba(0, 255, 136, 0.22);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .unit-label {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .message {
+        margin-top: 8px;
+        border-left: 3px solid rgba(0, 255, 136, 0.34);
+        padding: 12px 14px;
+        background: rgba(0, 255, 136, 0.05);
+        color: var(--text);
+        border-radius: 0 14px 14px 0;
+        min-height: 48px;
+      }
+
+      .footer {
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 10px;
+        animation: blink 1s steps(1) infinite;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .target-row,
+        .countdown-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .countdown-grid,
+        .target-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">Mission Countdown</div>
+          <h1>> Loading...<span class="cursor">_</span></h1>
+          <p class="subtitle">
+            If you can make one dollar, you can make a million more.
+          </p>
+        </div>
+        <div class="status" id="statusBadge">Tracking target</div>
+      </div>
+
+      <section class="target-card">
+        <div class="target-row">
+          <div class="field">
+            <label for="targetTitle">Target name</label>
+            <input
+              id="targetTitle"
+              type="text"
+              value="Next Big Goal"
+              placeholder="Exam, launch, trip, deadline..."
+            />
+          </div>
+          <div class="field">
+            <label for="targetDate">Target date and time</label>
+            <input id="targetDate" type="datetime-local" />
+          </div>
+        </div>
+      </section>
+
+      <section class="countdown-grid">
+        <div class="unit">
+          <span class="value" id="days">00</span>
+          <span class="unit-label">Days</span>
+        </div>
+        <div class="unit">
+          <span class="value" id="hours">00</span>
+          <span class="unit-label">Hours</span>
+        </div>
+        <div class="unit">
+          <span class="value" id="minutes">00</span>
+          <span class="unit-label">Minutes</span>
+        </div>
+        <div class="unit">
+          <span class="value" id="seconds">00</span>
+          <span class="unit-label">Seconds</span>
+        </div>
+      </section>
+
+      <div class="message" id="messageBox">Initializing countdown...</div>
+    </main>
+
+    <script>
+      const titleInput = document.getElementById("targetTitle");
+      const dateInput = document.getElementById("targetDate");
+      const statusBadge = document.getElementById("statusBadge");
+      const messageBox = document.getElementById("messageBox");
+      const daysEl = document.getElementById("days");
+      const hoursEl = document.getElementById("hours");
+      const minutesEl = document.getElementById("minutes");
+      const secondsEl = document.getElementById("seconds");
+
+      const STORAGE_KEY = "dark-hacker-countdown-v1";
+
+      function pad(value) {
+        return String(value).padStart(2, "0");
+      }
+
+      function getDefaultDateTimeLocal() {
+        const now = new Date();
+        now.setDate(now.getDate() + 7);
+        now.setHours(9, 0, 0, 0);
+        const offset = now.getTimezoneOffset();
+        const local = new Date(now.getTime() - offset * 60000);
+        return local.toISOString().slice(0, 16);
+      }
+
+      function saveState() {
+        const state = {
+          title: titleInput.value,
+          targetDate: dateInput.value,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            titleInput.value = "Next Big Goal";
+            dateInput.value = getDefaultDateTimeLocal();
+            return;
+          }
+          const state = JSON.parse(raw);
+          titleInput.value = state.title || "Next Big Goal";
+          dateInput.value = state.targetDate || getDefaultDateTimeLocal();
+        } catch {
+          titleInput.value = "Next Big Goal";
+          dateInput.value = getDefaultDateTimeLocal();
+        }
+      }
+
+      function updateCountdown() {
+        const title = (titleInput.value || "Next Big Goal").trim();
+        const target = new Date(dateInput.value);
+        const now = new Date();
+
+        if (!dateInput.value || Number.isNaN(target.getTime())) {
+          statusBadge.textContent = "Invalid target";
+          messageBox.textContent =
+            "Set a valid date and time to start tracking.";
+          daysEl.textContent =
+            hoursEl.textContent =
+            minutesEl.textContent =
+            secondsEl.textContent =
+              "00";
+          document.title = "Countdown Offline";
+          return;
+        }
+
+        const diff = target.getTime() - now.getTime();
+
+        if (diff <= 0) {
+          statusBadge.textContent = "Target reached";
+          messageBox.textContent = `> ${title} reached. System unlocked.`;
+          daysEl.textContent =
+            hoursEl.textContent =
+            minutesEl.textContent =
+            secondsEl.textContent =
+              "00";
+          document.title = `${title} reached`;
+          return;
+        }
+
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        daysEl.textContent = pad(days);
+        hoursEl.textContent = pad(hours);
+        minutesEl.textContent = pad(minutes);
+        secondsEl.textContent = pad(seconds);
+
+        statusBadge.textContent = "Tracking target";
+        messageBox.textContent = `> ${title}: ${days}d ${hours}h ${minutes}m ${seconds}s remaining.`;
+        document.title = `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s • ${title}`;
+      }
+
+      loadState();
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+
+      titleInput.addEventListener("input", () => {
+        saveState();
+        updateCountdown();
+      });
+
+      dateInput.addEventListener("change", () => {
+        saveState();
+        updateCountdown();
+      });
+    </script>
+  </body>
+</html>
